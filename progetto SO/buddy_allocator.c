@@ -47,7 +47,7 @@ void buddyAllocator_init(buddy_allocator* b_alloc, int min_size, int n_levels, c
     BitMap_init(&b_alloc->bitmap, n_bits, buf);
 
     //pongo lo stato dei bitmap a 0 (free)
-    for (int i = 0; i < n_bits, i++) {
+    for (int i = 0; i < n_bits; i++) {
         BitMap_setBit(&b_alloc->bitmap, i, 0);
     }
     printf("**** buddy allocator inizialization finished **** \n");
