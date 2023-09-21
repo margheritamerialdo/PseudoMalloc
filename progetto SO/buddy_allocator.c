@@ -47,9 +47,9 @@ void buddyAllocator_init(buddy_allocator* b_alloc, int min_size, int n_levels, c
     BitMap_init(&b_alloc->bitmap, n_bits, buf);
 
     //pongo lo stato dei bitmap a 0 (free)
-    for (int i = 0; i < n_bits, i++)
+    for (int i = 0; i < n_bits, i++) {
         BitMap_setBit(&b_alloc->bitmap, i, 0);
-
+    }
     printf("**** buddy allocator inizialization finished **** \n");
 }
 
@@ -90,7 +90,7 @@ int buddyAllocator_find_free_block(buddy_allocator * b_alloc, int level) {
     //blocco libero trovato al livello corrente
     if (b_index != -1) {
         printf("buddy trovato al livello %d: \n", level);
-        BitMap_setBit(b_alloc->bitmap, b_index, 0); //imposto il blocco occupato nella bitmap
+        BitMap_setBit(&b_alloc->bitmap, b_index, 0); //imposto il blocco occupato nella bitmap
         return b_index; 
     }
 
@@ -102,14 +102,16 @@ int buddyAllocator_find_free_block(buddy_allocator * b_alloc, int level) {
         return -1;
 
     //il parent buddy è disponibile, faccio lo split ponendo il destro libero e restituisco il sinistro
-    BitMap_setBit(b_alloc->bitmap, get_right_child_idx(p_index), 1);
+    BitMap_setBit(&b_alloc->bitmap, get_right_child_idx(p_index), 1);
     return get_left_child_idx(p_index);
 }
 
 int * buddyAllocator_get_address(buddy_allocator * b_alloc, int index, int level) {
     
     int offset = get_offset_from_first(index); //calcolo l'offset (posizione del blocco nel livello)
-    int dim_block = (1 << (b_alloc->n_levels - level - 1)) * alloc->min_bucket_size; //calcolo dim blocco dato il livello
+    int dim_block = (1 << (b_alloc->n_levels - level - 1)) * b_
+    
+    alloc->min_bucket_size; //calcolo dim blocco dato il livello
 
     int pos = offset * dim_block; //indice di posizione assoluta del blocco nell'intera area di memoria
 
@@ -188,9 +190,9 @@ void buddyAllocator_free(buddy_allocator * b_alloc, void *ptr) {
         }
 
         //imposto il bit corrispondente come libero
-        BitMap_setBit(b_alloc->bitmap, block_index, 1);
-        BitMap_setBit(b_alloc->bitmap, block_index, 0);
-        BitMap_setBit(b_alloc->bitmap, buddy_index, 0);
+        BitMap_setBit(&b_alloc->bitmap, block_index, 1);
+        BitMap_setBit(&b_alloc->bitmap, block_index, 0);
+        BitMap_setBit(&b_alloc->bitmap, buddy_index, 0);
 
         level++;
     }
