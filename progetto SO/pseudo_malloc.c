@@ -7,13 +7,13 @@
 #include "bit_map.h"
 #include "buddy_allocator.h"
 
-//definisco mem
+//definisco mem e buf
 char mem[MAX_BUDDY_SIZE];
+uint8_t buf[((1 << B_LEVELS)) - 1]; 
 
-void pseudoMalloc_init(buddy_allocator * b_alloc, int n_levels, int min_size, uint8_t buf) {
-     buddyAllocator_init(b_alloc, min_size, n_levels, mem, buf);
+void pseudoMalloc_init(buddy_allocator * b_alloc) {
+     buddyAllocator_init(b_alloc, MIN_BUDDY_SIZE, B_LEVELS, mem, buf);
 }
-
 void * pseudoMalloc_alloc(buddy_allocator * b_alloc, int size) {
 
     assert(size > 0);
