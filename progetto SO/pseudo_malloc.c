@@ -13,10 +13,14 @@ uint8_t buf[((1 << B_LEVELS)) - 1];
 
 void pseudoMalloc_init(buddy_allocator * b_alloc) {
      buddyAllocator_init(b_alloc, MIN_BUDDY_SIZE, B_LEVELS, mem, buf);
+     printf("\n **** inizializzazione PSEUDO MALLOC eseguita **** \n \n");
 }
 void * pseudoMalloc_alloc(buddy_allocator * b_alloc, int size) {
 
-    assert(size > 0);
+    if (size < 0) {
+        printf("errore: dimensione blocco negativa");
+        return NULL;
+    }
 
     size += sizeof(int); //includere lo spazio per l'header dell'allocazione
 
