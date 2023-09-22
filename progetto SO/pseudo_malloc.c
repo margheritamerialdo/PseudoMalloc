@@ -30,6 +30,7 @@ void * pseudoMalloc_alloc(buddy_allocator * b_alloc, int size) {
             printf("la funzione buddyAllocator_alloc ha fallito");
             return NULL;
         }
+        printf("allocazione con buddyAllocator_alloc avvenuta con successo \n=);
         return ptr_s;
     }
     else if (size > PAGE_SIZE/4){
@@ -38,6 +39,7 @@ void * pseudoMalloc_alloc(buddy_allocator * b_alloc, int size) {
             perror("errore allocazione memoria con mmap \n");
             return NULL;
         }
+        printf("allocazione con mmap avvenuta con successo \n=);
         return ptr_b;
     }
 }
