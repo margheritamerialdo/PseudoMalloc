@@ -1,3 +1,4 @@
+#pragma once
 #include "bit_map.h"
 
 // definizione struttura dati per buddy allocator
