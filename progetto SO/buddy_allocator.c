@@ -4,7 +4,7 @@
 #include <math.h>
 
 int get_parent_idx(int index) {
-    return (int)floor((index - 1)/2);
+    return (int)((index - 1)/2);
 }
 
 int get_letf_child_idx(int index) {
@@ -26,7 +26,7 @@ int get_buddy_idx(int index) {
 }
 
 get_level_from_index(int index) {
-    return floor(log2(index));
+    return (log2(index));
 }
 
 get_first_idx_at_level(int level) {
@@ -46,20 +46,23 @@ void buddyAllocator_init(buddy_allocator* b_alloc, int min_size, int n_levels, c
     int n_bits = (1 << n_levels) - 1; //numero di bit necessari per rappresentare un albero binario completo con n_levels. -> assegno un bit ad ogni nodo
     BitMap_init(&b_alloc->bitmap, n_bits, buf);
 
-    //pongo lo stato dei bitmap a 0 (free)
+    //pongo lo stato dei bitmap a 1 (free)
     for (int i = 0; i < n_bits; i++) {
-        BitMap_setBit(&b_alloc->bitmap, i, 0);
+        BitMap_setBit(&b_alloc->bitmap, i, 1);
     }
-    printf("**** buddy allocator inizialization finished **** \n");
+    printf("**** inizializzazione BUDDY ALLOCATOR eseguita **** \n");
 }
 
 int buddyAllocator_free_block_at_level(buddy_allocator * b_alloc, int level) {
-    assert(level < b_alloc->n_levels);
+    if (level > b_alloc->n_levels || level < 0){
+        printf("livello non valido);
+        return -1;
+}
 
     int start_idx = get_first_idx_at_level(level);
     int end_idx = get_first_idx_at_level(level + 1);
 
-    for (int i = start_idx; i < end_idx; i++) {
+    for (int i = start_idx; i <= end_idx; i++) {
         //controllo che il blocco sia libero
         if (BitMap_bit(&b_alloc->bitmap, i) == 1) {
             return i; //blocco libero trovato
@@ -83,7 +86,7 @@ int buddyAllocator_find_free_block(buddy_allocator * b_alloc, int level) {
         printf("Buddy da allocare non trovato per questa richiesta");
         return -1;
     }
-    assert(level <= b_alloc->n_levels);
+    assert(level < b_alloc->n_levels);
 
     int b_index = buddyAllocator_free_block_at_level(b_alloc, level);
 
@@ -98,8 +101,10 @@ int buddyAllocator_find_free_block(buddy_allocator * b_alloc, int level) {
     int p_index = buddyAllocator_find_free_block(b_alloc, level-1);
 
     //non ci sono buddy disponibili
-    if (p_index == -1) 
+    if (p_index == -1) {
+        printf("non ci sono buddy disponibili");
         return -1;
+    }
 
     //il parent buddy è disponibile, faccio lo split ponendo il destro libero e restituisco il sinistro
     BitMap_setBit(&b_alloc->bitmap, get_right_child_idx(p_index), 1);
@@ -109,15 +114,14 @@ int buddyAllocator_find_free_block(buddy_allocator * b_alloc, int level) {
 int * buddyAllocator_get_address(buddy_allocator * b_alloc, int index, int level) {
     
     int offset = get_offset_from_first(index); //calcolo l'offset (posizione del blocco nel livello)
-    int dim_block = (1 << (b_alloc->n_levels - level - 1)) * b_
-    
-    alloc->min_bucket_size; //calcolo dim blocco dato il livello
+    int dim_block = (1 << (b_alloc->n_levels - level - 1)) * b_alloc->min_bucket_size; //calcolo dim blocco dato il livello
 
     int pos = offset * dim_block; //indice di posizione assoluta del blocco nell'intera area di memoria
 
     int * addr = (int*)(b_alloc->mem + pos); //indirizzo risultante è un puntatore all'inizio del blocco di memoria
 
-    return addr;
+    * addr = index;
+    return (void * )(addr + 1);
 }
 
 void * buddyAllocator_alloc(buddy_allocator * b_alloc, int size) {
@@ -125,7 +129,6 @@ void * buddyAllocator_alloc(buddy_allocator * b_alloc, int size) {
 
     if(level == -1){
     printf("livello con blocco abbastanza grande da soddisfare la richiesta non trovato\n");
-    perror("errore buddyAllocator_alloc: no memoria disponibile");
     return NULL;
     }
 
@@ -133,18 +136,13 @@ void * buddyAllocator_alloc(buddy_allocator * b_alloc, int size) {
 
     //non ho trovato alcun blocco libero
     if (block_index == -1) {
-        perror("errore buddyAllocator_alloc: no memoria disponibile");
+        printf("errore buddyAllocator_alloc: no memoria disponibile \n");
         return NULL;
     }
 
     //ho trovato un blocco libero, lo devo allocare
     else {
-
-        int * addr = buddyAllocator_get_address(b_alloc, block_index, level);
-
-        *addr = block_index; //salvo indice del blocco di mem allocata
-
-        return (void*)(addr + 1);
+        return buddyAllocator_get_address(b_alloc, block_index, level);
     }
 
 }
@@ -152,8 +150,7 @@ void * buddyAllocator_alloc(buddy_allocator * b_alloc, int size) {
 void buddyAllocator_free(buddy_allocator * b_alloc, void *ptr) {
     if (ptr == NULL) {
         //gestione nel caso in cui il puntatore è null
-        printf("Tentativo di liberare un puntatore NULL \n");
-        return NULL;
+        perror("Tentativo di liberare un puntatore NULL");
     }
 
     //calcolo l'indice del blocco dal puntatore fornito
