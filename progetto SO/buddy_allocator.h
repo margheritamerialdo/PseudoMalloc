@@ -6,7 +6,7 @@
 typedef struct {
     int min_size; // dimensione minima che può assumero un blocco
     int n_levels; // livelli albero
-    BitMap bitmap; // 
+    BitMap bitmap; 
     char* mem; // puntatore alla memoria allocata
 } buddy_allocator;
 
@@ -14,7 +14,7 @@ typedef struct {
 void buddyAllocator_init(buddy_allocator* b_alloc, int min_size, int n_levels, char* mem, uint8_t *buf);
 
 //cerca il primo blocco libero del livello passato
-int buddyAllocator_free_block(buddy_allocator * b_alloc, int level);
+int buddyAllocator_free_block_at_level(buddy_allocator * b_alloc, int level);
 
 //cerca il livello con la partizione più piccola che possa soddisfare la richiesta (data una dimensione)
 int buddyAllocator_find_min_level(buddy_allocator * b_alloc, int size);
