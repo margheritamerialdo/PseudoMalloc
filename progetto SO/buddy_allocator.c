@@ -94,7 +94,6 @@ int buddyAllocator_find_free_block(buddy_allocator * b_alloc, int level) {
     //blocco libero trovato al livello corrente
     if (b_index != -1) {
         BitMap_setBit(&b_alloc->bitmap, b_index, 0); //imposto il blocco occupato nella bitmap
-        printf("status bit %d dell'index block %d al livello %d \n", BitMap_bit(&b_alloc->bitmap, b_index), b_index, level);
         return b_index; 
     }
 
@@ -193,5 +192,5 @@ void buddyAllocator_free(buddy_allocator * b_alloc, void *ptr) {
    
     buddyAllocator_free_buddies(b_alloc, block_index);
 
-    printf("status bit %d dell'index block %d \n", BitMap_bit(&b_alloc->bitmap, block_index), block_index);
+    
 }
