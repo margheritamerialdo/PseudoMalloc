@@ -173,23 +173,20 @@ void buddyAllocator_free(buddy_allocator * b_alloc, void *ptr) {
     while (level < b_alloc->n_levels - 1) {
 
         int buddy_index = get_buddy_idx(block_index);
-        int parent_index;
+        int parent_index = get_parent_idx(block_index);
+
 
         if (buddy_index == -1 || BitMap_bit(&b_alloc->bitmap, buddy_index) == 0) {
-            // Non c'è un buddy libero o il buddy non è libero, interrompi la fusione
+            // Non esiste o il buddy non è libero, interrompi la fusione
             break;
         }
-        if (block_index < buddy_index) {
-            parent_index = get_parent_idx(block_index);
+        if (BitMap_bit(&b_alloc->bitmap, block_index) == 1 && BitMap_bit(&b_alloc->bitmap, buddy_index) == 1) {
+            
+            //imposto il bit corrispondente come libero
+            BitMap_setBit(&b_alloc->bitmap, parent_index, 1);
+            BitMap_setBit(&b_alloc->bitmap, block_index, 0);
+            BitMap_setBit(&b_alloc->bitmap, buddy_index, 0);
         }
-        else {
-            parent_index = get_parent_idx(buddy_index);
-        }
-
-        //imposto il bit corrispondente come libero
-        BitMap_setBit(&b_alloc->bitmap, parent_index, 1);
-        BitMap_setBit(&b_alloc->bitmap, block_index, 0);
-        BitMap_setBit(&b_alloc->bitmap, buddy_index, 0);
 
         level++;
     }
