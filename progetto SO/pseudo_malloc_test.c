@@ -205,6 +205,6 @@ void buddy_allocator_test() {
 
 int main() {
     buddy_allocator_test();
-    //pseudo_malloc_test();
+    pseudo_malloc_test();
     return 0;
 }
