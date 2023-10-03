@@ -28,5 +28,7 @@ int * buddyAllocator_get_address(buddy_allocator * b_alloc, int index, int level
 //alloca un blocco del buddyAllocator di dimensione dim
 void * buddyAllocator_alloc(buddy_allocator * b_alloc, int size);
 
-//libera i buddy e nel caso sia possibile merga due buddy
+//libera i buddy e nel caso sia possibile merge dei due buddy
+void buddyAllocator_free_buddies(buddy_allocator * b_alloc, int index);
+
 void buddyAllocator_free(buddy_allocator * b_alloc, void *ptr);

@@ -83,10 +83,10 @@ void pseudo_malloc_test() {
     if(ptr6!=NULL){
         printf("allocazione blocco da 0 riuscita all'indirizzo %p\n", ptr6);
         pseudoMalloc_free(&b_alloc, ptr6, 0);
-        printf("deallocazione blocco da 4096 riuscita \n\n");
+        printf("deallocazione blocco da 0 riuscita \n\n");
     }
     else {
-        printf("problema con l'allocazione blocco da 0 \n\n");
+        printf("problema con l'allocazione blocco da 0, giusto! \n\n");
     }
     
     printf("\nTEST 7: allocazione -1+4 bytes\n");
@@ -97,7 +97,7 @@ void pseudo_malloc_test() {
         printf("deallocazione blocco da -1 riuscita \n\n");
     }
     else {
-        printf("problema con l'allocazione blocco da -1 \n\n");
+        printf("problema con l'allocazione blocco da -1, giusto! \n\n");
     }
 }
 
@@ -119,7 +119,7 @@ void buddy_allocator_test() {
     }
     else {
         printf("allocazione blocco da 1024 riuscita all'indirizzo: %p \n", ptr0);
-        //buddyAllocator_free(&b_alloc, ptr0);
+        buddyAllocator_free(&b_alloc, ptr0);
         printf("deallocazione blocco da 1024 riuscita \n \n");
     }
     printf("\nTEST 1: allocazione blocco da 2048 \n");
@@ -129,7 +129,7 @@ void buddy_allocator_test() {
     }
     else {
         printf("allocazione blocco da 2048 riuscita all'indirizzo: %p \n", ptr1);
-        //buddyAllocator_free(&b_alloc, ptr1);
+        buddyAllocator_free(&b_alloc, ptr1);
         printf("deallocazione blocco da 2048 riuscita \n \n");
     }
     printf("\nTEST 2: allocazione blocco da 4096 \n");
@@ -138,8 +138,8 @@ void buddy_allocator_test() {
         printf("problema con l'allocazione blocco da 4096 \n \n");
     }
     else {
-        printf("allocazione blocco da 4096 riuscita \n");
-        //buddyAllocator_free(&b_alloc, ptr2);
+        printf("allocazione blocco da 4096 riuscita all'indirizzo: %p \n", ptr2);
+        buddyAllocator_free(&b_alloc, ptr2);
         printf("deallocazione blocco da 4096 riuscita \n \n");
     }
     printf("\nTEST 3: allocazione blocco da 6144 \n");
@@ -148,8 +148,8 @@ void buddy_allocator_test() {
         printf("problema con l'allocazione blocco da 6144 \n \n");
     }
     else {
-        printf("allocazione blocco da 6144 riuscita \n");
-        //buddyAllocator_free(&b_alloc, ptr3);
+        printf("allocazione blocco da 6144 riuscita all'indirizzo: %p \n", ptr3);
+        buddyAllocator_free(&b_alloc, ptr3);
         printf("deallocazione blocco da 6144 riuscita \n \n");
     }
     printf("\nTEST 4: allocazione blocco da 500000 \n");
@@ -158,17 +158,17 @@ void buddy_allocator_test() {
         printf("problema con l'allocazione blocco da 500000 \n \n");
     }
     else {
-        printf("allocazione blocco da 500000 riuscita \n");
+        printf("allocazione blocco da 500000 riuscita all'indirizzo: %p \n", ptr4);
         buddyAllocator_free(&b_alloc, ptr4);
         printf("deallocazione blocco da 500000 riuscita \n \n");
     }
     printf("\nTEST 5: allocazione blocco da MAX_BUDDY_SIZE \n");
     void *ptr5 = buddyAllocator_alloc(&b_alloc, MAX_BUDDY_SIZE); 
     if (ptr5 == NULL) {
-        printf("problema con l'allocazione blocco da MAX_BUDDY_SIZE \n \n");
+        printf("problema con l'allocazione blocco da MAX_BUDDY_SIZE, giusto! dimensione troppo elevata \n \n");
     }
     else {
-        printf("allocazione blocco da MAX_BUDDY_SIZE riuscita \n");
+        printf("allocazione blocco da MAX_BUDDY_SIZE riuscita all'indirizzo: %p \n", ptr5);
         buddyAllocator_free(&b_alloc, ptr5);
         printf("deallocazione blocco da MAX_BUDDY_SIZE riuscita \n \n");
     }
@@ -182,13 +182,22 @@ void buddy_allocator_test() {
         buddyAllocator_free(&b_alloc, ptr7);
     }
     else if (ptr6 != NULL && ptr7 == NULL) {
-        printf("allocazione ptr6 riuscita e ptr7 no, GIUSTO! \n");
+        printf("allocazione ptr6 riuscita e ptr7 no, GIUSTO! all'indirizzo: %p \n", ptr6);
         buddyAllocator_free(&b_alloc, ptr6);
     }
     else if (ptr6 == NULL && ptr7 == NULL) {
         printf("allocazione ptr6 e ptr7 non riuscita, ERRORE! \n");
-        buddyAllocator_free(&b_alloc, ptr6);
-        buddyAllocator_free(&b_alloc, ptr7);
+    }
+
+    printf("\nTEST 7: allocazione blocco da 1000000 \n");
+    void *ptr8 = buddyAllocator_alloc(&b_alloc, 1000000); 
+    if (ptr8 == NULL) {
+        printf("problema con l'allocazione blocco da 1000000 \n \n");
+    }
+    else {
+        printf("allocazione blocco da 1000000 riuscita all'indirizzo: %p \n", ptr7);
+        buddyAllocator_free(&b_alloc, ptr8);
+        printf("deallocazione blocco da 1000000 riuscita \n \n");
     }
 
     printf("\n **** FINE TEST SUL BUDDY ALLOCATOR **** \n\n");
@@ -196,6 +205,6 @@ void buddy_allocator_test() {
 
 int main() {
     buddy_allocator_test();
-    pseudo_malloc_test();
+    //pseudo_malloc_test();
     return 0;
 }

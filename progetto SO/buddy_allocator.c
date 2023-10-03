@@ -90,7 +90,6 @@ int buddyAllocator_find_free_block(buddy_allocator * b_alloc, int level) {
     assert(level < b_alloc->n_levels);
 
     int b_index = buddyAllocator_free_block_at_level(b_alloc, level);
-    printf("b_index : %d \n", b_index);
 
     //blocco libero trovato al livello corrente
     if (b_index != -1) {
@@ -133,7 +132,6 @@ void * buddyAllocator_alloc(buddy_allocator * b_alloc, int size) {
     }
 
     int block_index = buddyAllocator_find_free_block(b_alloc, level); //cerco il blocco libero a partire dal livello minimo trovato
-    printf("block: %d \n", block_index);
     //non ho trovato alcun blocco libero
     if (block_index == -1) {
         printf("errore buddyAllocator_alloc: no memoria disponibile \n");
@@ -148,29 +146,15 @@ void * buddyAllocator_alloc(buddy_allocator * b_alloc, int size) {
     }
 }
 
-void buddyAllocator_free(buddy_allocator * b_alloc, void *ptr) {
-    if (ptr == NULL) {
-        //gestione nel caso in cui il puntatore è null
-        perror("Tentativo di liberare un puntatore NULL");
-    }
-
-    //calcolo l'indice del blocco dal puntatore fornito
-    int *addr = (int*) ptr;
-    int block_index = *(addr-1);
-
-    //controllo se l'indice del blocco è valido
-    if (block_index < 0 || block_index >= (1 << b_alloc->n_levels) - 1) {
-        perror("tentativo di liberare un blocco con indice non valido");
-    }
-
-    //imposto il bit corrispondente nella bitmap come libero (1)
+void buddyAllocator_free_buddies(buddy_allocator * b_alloc, int block_index) {
+     //imposto il bit corrispondente nella bitmap come libero (1)
     BitMap_setBit(&b_alloc->bitmap, block_index, 1);
 
     //se possibile si esegue il merge dei buddy
 
     int level = get_level_from_index(block_index);
 
-    while (level < b_alloc->n_levels - 1) {
+    while (level > 0) {
 
         int buddy_index = get_buddy_idx(block_index);
         int parent_index = get_parent_idx(block_index);
@@ -188,6 +172,26 @@ void buddyAllocator_free(buddy_allocator * b_alloc, void *ptr) {
             BitMap_setBit(&b_alloc->bitmap, buddy_index, 0);
         }
 
-        level++;
+        level--;
     }
+}
+
+void buddyAllocator_free(buddy_allocator * b_alloc, void *ptr) {
+    if (ptr == NULL) {
+        //gestione nel caso in cui il puntatore è null
+        perror("Tentativo di liberare un puntatore NULL");
+    }
+
+    //calcolo l'indice del blocco dal puntatore fornito
+    int *addr = (int*) ptr;
+    int block_index = *(addr - 1);
+
+    //controllo se l'indice del blocco è valido
+    if (block_index < 0 || block_index >= (1 << b_alloc->n_levels) - 1) {
+        perror("tentativo di liberare un blocco con indice non valido");
+    }
+   
+    buddyAllocator_free_buddies(b_alloc, block_index);
+
+    printf("status bit %d dell'index block %d \n", BitMap_bit(&b_alloc->bitmap, block_index), block_index);
 }

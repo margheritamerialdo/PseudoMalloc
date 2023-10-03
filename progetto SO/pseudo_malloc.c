@@ -10,7 +10,7 @@
 
 //definisco mem e buf
 char mem[MAX_BUDDY_SIZE];
-uint8_t buf[((1 << B_LEVELS)) - 1]; 
+uint8_t buf[((1 << B_LEVELS)) - 1]; //numero di bit necessari per rappresentare un albero binario completo con n_levels.
 
 
 void pseudoMalloc_init(buddy_allocator * b_alloc) {
