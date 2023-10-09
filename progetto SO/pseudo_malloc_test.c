@@ -14,6 +14,7 @@
 #define MIN_BUDDY_SIZE (MAX_BUDDY_SIZE >> (B_LEVELS - 1)) //((MAX_BUDDY_SIZE/2^(B_LEVEL-1) = 4KB) valore più piccolo che il buddy allocator può gestire.
 #define N_BUDDIES (1 << B_LEVELS) -1                      //numero di buddies nell'albero (2^B_LEVEL) - 1
 
+//funzione per scrivere nell'area di memoria
 int write_on_mem(int size, void *ptr) {
     if (size <= 0) {
         printf("dim non valida in scrittura\n");
@@ -23,28 +24,20 @@ int write_on_mem(int size, void *ptr) {
     if (size <= PAGE_SIZE / 4) {
         // Scrivi il valore 1 nel blocco di memoria allocato con buddy
         *(int*)ptr = 1;
-        return 0; // Restituisci 1 per indicare successo
+        return 0; // Restituisci 0 per indicare successo
     } else if (size > PAGE_SIZE / 4) {
         // Scrivi il valore 10 nel blocco di memoria allocato con mmap
         *(int*)ptr = 10;
-        return 0; // Restituisci 1 per indicare successo
+        return 0; // Restituisci 0 per indicare successo
     }
 }
-
+//funzione per leggere nell'area di memoria
 int read_from_mem(int size, void *ptr) {
     if (size <= 0) {
         printf("dim non valida in lettura\n");
         return -1; // Restituisci 0 per indicare errore (dimensione non valida)
     }
-    size += 4; 
-
-    if (size <= PAGE_SIZE / 4) {
-        // Leggi il valore dal blocco di memoria e restituiscilo
-        return *(int*)ptr;
-    } else if (size > PAGE_SIZE / 4) {
-        // Leggi il valore dal blocco di memoria e restituiscilo
-        return *(int*)ptr;
-    }
+    return *(int*)ptr;
 }
 
 void pseudo_malloc_test() {
