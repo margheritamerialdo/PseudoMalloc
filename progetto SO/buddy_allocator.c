@@ -191,6 +191,5 @@ void buddyAllocator_free(buddy_allocator * b_alloc, void *ptr) {
     }
    
     buddyAllocator_free_buddies(b_alloc, block_index);
-
-    
+    printf("deallocazione avvenuta con successo! \n");
 }

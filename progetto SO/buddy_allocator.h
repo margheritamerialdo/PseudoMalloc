@@ -10,6 +10,8 @@ typedef struct {
     char* mem; // puntatore alla memoria allocata
 } buddy_allocator;
 
+int get_level_from_index(int index);
+
 //inizializzazione della struttura dati buddy allocator
 void buddyAllocator_init(buddy_allocator* b_alloc, int min_size, int n_levels, char* mem, uint8_t *buf);
 

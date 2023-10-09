@@ -13,4 +13,4 @@ void pseudoMalloc_init(buddy_allocator * b_alloc);
 void * pseudoMalloc_alloc(buddy_allocator * b_alloc, int size);
 
 //dealloca la memoria
-void pseudoMalloc_free(buddy_allocator * b_alloc, void* ptr, int size);
+void pseudoMalloc_free(buddy_allocator * b_alloc, void* ptr);

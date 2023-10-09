@@ -44,30 +44,37 @@ void * pseudoMalloc_alloc(buddy_allocator * b_alloc, int size) {
             perror("Errore durante mmap");
             return NULL;
         }
+        *((int*)ptr_b) = size;
         return ptr_b;
     }
     return NULL; 
 }
 
-void pseudoMalloc_free(buddy_allocator * b_alloc, void* ptr, int size) {
+void pseudoMalloc_free(buddy_allocator * b_alloc, void* ptr) {
 
-    if (size < 1 || ptr == NULL) {
+    if (ptr == NULL) {
         printf("errore: richiesta non valida \n");
         return;
     }
 
-    size += sizeof(int);
     int i;
+    void* first = mem;
+    void* last = mem + MAX_BUDDY_SIZE * sizeof(char);
 
-    if (size <= PAGE_SIZE/4) {
+    if (ptr >= first && ptr <= last) {
+        printf("free con buddy \n");
         buddyAllocator_free(b_alloc, ptr);
+        printf("deallocazione con buddy riuscita \n\n");
     }
+    
+    else {
+        int size = *((int*)ptr);
 
-    else if (size > PAGE_SIZE/4) {
         i = munmap(ptr, size);
         if (i == -1) {
             perror("Errore durante munmap");
             return;
         }
+         printf("deallocazione con munmap riuscita \n\n");
     }
 }
