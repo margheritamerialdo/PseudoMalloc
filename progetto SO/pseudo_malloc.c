@@ -49,7 +49,7 @@ void * pseudoMalloc_alloc(buddy_allocator * b_alloc, int size) {
     }
     return NULL; 
 }
-
+//pseudoMalloc_free aggiornata -> non viene passata la size come parametro
 void pseudoMalloc_free(buddy_allocator * b_alloc, void* ptr) {
 
     if (ptr == NULL) {
