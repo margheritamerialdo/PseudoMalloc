@@ -112,14 +112,14 @@ int buddyAllocator_find_free_block(buddy_allocator * b_alloc, int level) {
     return get_left_child_idx(p_index);
 }
 
-int * buddyAllocator_get_address(buddy_allocator * b_alloc, int index, int level) {
+void * buddyAllocator_get_address(buddy_allocator * b_alloc, int index, int level) {
     
     int offset = get_offset_from_first(index); //calcolo l'offset (posizione del blocco nel livello -> numero di blocchi da sinistra nell'array bitmap fino al blocco specificato)
     int dim_block = (1 << (b_alloc->n_levels - level - 1)) * b_alloc->min_size; //calcolo dim blocco dato il livello
     int pos = offset * dim_block; //indice di posizione assoluta del blocco nell'intera area di memoria
     int * addr = (int*)(b_alloc->mem + pos); //indirizzo risultante è un puntatore all'inizio del blocco di memoria
     * addr = index;
-    return (void*)(addr + 1);
+    return (addr + 1);
 }
 
 void * buddyAllocator_alloc(buddy_allocator * b_alloc, int size) {
