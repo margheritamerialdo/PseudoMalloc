@@ -23,7 +23,7 @@ int buddyAllocator_find_min_level(buddy_allocator * b_alloc, int size);
 int buddyAllocator_find_free_block(buddy_allocator * b_alloc, int level);
 
 //calcola l'indirizzo di un blocco di memoria in base all'indice e al livello specificati
-int * buddyAllocator_get_address(buddy_allocator * b_alloc, int index, int level);
+void * buddyAllocator_get_address(buddy_allocator * b_alloc, int index, int level);
 
 //alloca un blocco del buddyAllocator di dimensione dim
 void * buddyAllocator_alloc(buddy_allocator * b_alloc, int size);
